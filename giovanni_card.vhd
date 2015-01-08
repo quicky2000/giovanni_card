@@ -47,38 +47,56 @@ entity giovanni_card is
 end giovanni_card;
 
 architecture Behavioral of giovanni_card is
-
+  signal reg_scr_red : std_logic_vector(5 downto 0) := (others => '0');
+  signal reg_scr_green : std_logic_vector(5 downto 0) := (others => '0');
+  signal reg_scr_blue : std_logic_vector(5 downto 0) := (others => '0');
+  signal reg_scr_hsync : std_logic := '0';
+  signal reg_scr_vsync : std_logic := '0';
+  signal reg_scr_enable : std_logic := '0';
 begin
+
+  screens_signals_register : process(scr_clk)
+  begin
+    if rising_edge(scr_clk) then
+      reg_scr_red <= scr_red;
+      reg_scr_green <= scr_green;
+      reg_scr_blue <= scr_blue;
+      reg_scr_hsync <= scr_hsync;
+      reg_scr_vsync <= scr_vsync;
+      reg_scr_enable <= scr_enable;
+    end if;
+  end process;
+
   w1a(0) <= io(0);
   w1a(1) <= io(1);
   w1a(2) <= scr_up_down;  -- LCD_31
-  w1a(3) <= scr_enable;   -- LCD_27
-  w1a(4) <= scr_blue(5);  -- LCD_25
-  w1a(5) <= scr_blue(3);  -- LCD_23
-  w1a(6) <= scr_blue(1);  -- LCD_21
-  w1a(7) <= scr_green(4); -- LCD_17
-  w1a(8) <= scr_green(2); -- LCD_15
-  w1a(9) <= scr_green(0); -- LCD_13
-  w1a(10) <= scr_red(5);  -- LCD_11
-  w1a(11) <= scr_red(3);  -- LCD_9
-  w1a(12) <= scr_red(1);  -- LCD_7
-  w1a(13) <= scr_hsync;   -- LCD_3
+  w1a(3) <= reg_scr_enable;   -- LCD_27
+  w1a(4) <= reg_scr_blue(5);  -- LCD_25
+  w1a(5) <= reg_scr_blue(3);  -- LCD_23
+  w1a(6) <= reg_scr_blue(1);  -- LCD_21
+  w1a(7) <= reg_scr_green(4); -- LCD_17
+  w1a(8) <= reg_scr_green(2); -- LCD_15
+  w1a(9) <= reg_scr_green(0); -- LCD_13
+  w1a(10) <= reg_scr_red(5);  -- LCD_11
+  w1a(11) <= reg_scr_red(3);  -- LCD_9
+  w1a(12) <= reg_scr_red(1);  -- LCD_7
+  w1a(13) <= reg_scr_hsync;   -- LCD_3
   w1a(14) <= audio_right;
   w1a(15) <= audio_left;
 
   audio_stereo_ok <= w1b(0);
   audio_plugged <= w1b(1);
   w1b(2) <= scr_clk;      -- LCD 2
-  w1b(3) <= scr_vsync;    -- LCD 4
-  w1b(4) <= scr_red(0);   -- LCD_6
-  w1b(5) <= scr_red(2);   -- LCD_8
-  w1b(6) <= scr_red(4);   -- LCD_10
-  w1b(7) <= scr_green(1); -- LCD_14
-  w1b(8) <= scr_green(3); -- LCD_16
-  w1b(9) <= scr_green(5); -- LCD_18
-  w1b(10) <= scr_blue(0); -- LCD_20
-  w1b(11) <= scr_blue(2); -- LCD_22
-  w1b(12) <= scr_blue(4); -- LCD_24
+  w1b(3) <= reg_scr_vsync;    -- LCD 4
+  w1b(4) <= reg_scr_red(0);   -- LCD_6
+  w1b(5) <= reg_scr_red(2);   -- LCD_8
+  w1b(6) <= reg_scr_red(4);   -- LCD_10
+  w1b(7) <= reg_scr_green(1); -- LCD_14
+  w1b(8) <= reg_scr_green(3); -- LCD_16
+  w1b(9) <= reg_scr_green(5); -- LCD_18
+  w1b(10) <= reg_scr_blue(0); -- LCD_20
+  w1b(11) <= reg_scr_blue(2); -- LCD_22
+  w1b(12) <= reg_scr_blue(4); -- LCD_24
   w1b(13) <= scr_right_left; --LCD_30
   w1b(14) <= io(2);
   w1b(15) <= io(3);
